@@ -34,9 +34,7 @@ class fusion_layer(nn.Module):
         clss = nn.Linear(in_channels,out_channels,bias=True)
         return clss
 
-#################
 
-### transpose permute 是维度交换, view 可以用于元素压缩和展开
     def forward(self,text_x,label_token,task_token,lab_x,length,fixed_label_embedding,fixed_task_embedding,Fixed,Flatten,mode='fusion'):
 
         text_pred,weights,c,t,u,weighted_embed = self.text_encoder(text_x,label_token,task_token)
@@ -54,17 +52,7 @@ class fusion_layer(nn.Module):
         return output,c,t,u,weights,fused_score,text_pred,c_o,g,u1
 
 
-if __name__ == "__main__":
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    x0 = torch.randn(2,17,256).to(device)
-    x1 = torch.randn(2,1,256).to(device)
-    dropout = 0.5
-    filter_size = 3
-    net = fusion_layer(filter_size,dropout)
-    net = net.to(device)
-    net.train()
-    output = net(x0,x1)
-    print(output.shape)
+
 
 
 
