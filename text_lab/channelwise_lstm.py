@@ -98,12 +98,7 @@ class cw_lstm_model(nn.Module):
         last_hidden = torch.sum(hn,axis=0).squeeze(0).contiguous()
         last_hidden = last_hidden.view(total_output.shape[0],total_output.shape[1],last_hidden.shape[-1])
 
-        # score_sa = self.self_att(last_hidden,last_hidden)
-        #### fine tune,  biobert
-        # score_ca = self.cross_att(task_embedding,label_embedding).squeeze(1)
-        # fused_score_matrix = torch.cat([score_sa,score_ca],-1)
 
-        # fused_score = self.map_dense(fused_score_matrix)
         fused_score,g,u = self.cross_att(task_embedding,label_embedding)
         last_hidden_att = last_hidden * fused_score.squeeze(1)
 
@@ -111,16 +106,6 @@ class cw_lstm_model(nn.Module):
         last_hidden_att = last_hidden_att.sum(1).unsqueeze(1)
         return last_hidden_att,fused_score,g,u
       
-if __name__ == "__main__":
-    device = torch.device("cuda:1")
-    x = torch.randn(2, 80, 17, 1).to(device)
-    label_embedding = torch.randn(1,17,768).to(device)
-    task_embedding = torch.randn(1, 25,768).to(device)
-    net = cw_lstm_model()
-    net = net.to(device)
-    net.train()
-    output = net(x,[80,60],label_embedding,task_embedding)
-
 
 
 
