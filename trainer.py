@@ -36,7 +36,7 @@ Fixed  = True
 strict = True
 pretrained = False
 save_name = "fusion_915_fixed"
-weight_dir = "logs/weights_fusion/ca_flatten_fixed_61_epoch_0_loss_0.3132_acc_0.9036.pth"
+weight_dir = ".pth"
 device1 = "cuda:1" if torch.cuda.is_available() else "cpu"
 device1 = torch.device(device1)
 device2 = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -59,8 +59,6 @@ def calc_loss_c(c,criterion,model, y, device):
     """
     torch.tensor([0,1,2]) is decoded identity label vector
     """
-    ## 每个class 内部自己做cross entropy， 相当于做了25次， 也就是25个batch，python cross entropy 自带softmax,也不用做onehot
-    # print(c.shape)
     f2_c = model.text_fc(c)
     # f2_c = model.fc(c)
     y_c =  torch.stack([torch.range(0, y.shape[1] - 1, dtype=torch.long)]*c.shape[0]).to(device)
@@ -146,7 +144,7 @@ def fit(epoch,model,train_iterator,test_iterator,fixed_label_embedding,fixed_tas
         loss_ls.append(float(loss.cpu().data))
 
     if flag == "test":
-        PATH=f"/home/comp/cssniu/RAIM/logs/{save_dir}/{save_name}_epoch_{epoch}_loss_{round(np.mean(loss_ls),4)}_f1_{round(np.mean(acc_ls),4)}.pth"
+        PATH=f"logs/{save_dir}/{save_name}_epoch_{epoch}_loss_{round(np.mean(loss_ls),4)}_f1_{round(np.mean(acc_ls),4)}.pth"
         best_model_wts = copy.deepcopy(model.state_dict())
         torch.save(best_model_wts, PATH)
     print("PHASE：{} EPOCH : {} | F1 : {} | ROC ： {} | LOSS : {}".format(flag,epoch + 1,  np.mean(f1_ls),np.mean(acc_ls), np.mean(loss_ls)))
@@ -166,11 +164,7 @@ def engine(hyperparams,model, train_iterator, test_iterator,fixed_label_embeddin
 
 
 def collate_fn(data):
-    """
-    定义 dataloader 的返回值
-    :param data: 第0维：data，第1维：label
-    :return: 序列化的data、记录实际长度的序列、以及label列表
-    """
+
     data.sort(key=lambda x: len(x[0]), reverse=True)
  
     data_length = [sq[0].shape[0] for sq in data]
@@ -188,13 +182,13 @@ if __name__ == "__main__":
    
 
 
-    task_embedding,label_embedding= knowledge_dataloader.load_embeddings("/home/comp/cssniu/RAIM/embedding.pth")
+    task_embedding,label_embedding= knowledge_dataloader.load_embeddings("")
     fixed_label_embedding = torch.stack(label_embedding)
     fixed_task_embedding = torch.stack(task_embedding)
 
-    train_data =  TEXTDataset('/home/comp/cssniu/RAIM/benchmark_data/all/data/train/',flag="train",all_feature=True)
+    train_data =  TEXTDataset('',flag="train",all_feature=True)
 
-    test_data = TEXTDataset('/home/comp/cssniu/RAIM/benchmark_data/all/data/test/',flag="test",all_feature=True)
+    test_data = TEXTDataset('',flag="test",all_feature=True)
 
     print('len of train data:', len(train_data))             
     print('len of test data:', len(test_data)) 
