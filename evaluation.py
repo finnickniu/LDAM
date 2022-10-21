@@ -37,23 +37,12 @@ device = torch.device(device)
 Best_loss = 10000
 Flatten = True
 Fixed  = True
-# weights_dir = "logs/weights_fusion/ca_flatten_fixed_61_epoch_13_loss_0.2935_acc_0.8929.pth"
-# weights_dir = "logs/weights_fusion/ca_flatten_fixed_61_epoch_0_loss_0.3132_acc_0.9036.pth"
+
 
 weights_list = sorted(os.listdir("logs/weights_fusion/"))
-# weights_list = ["fusion_99_no_dynamic_epoch_10_loss_0.3107_f1_0.6538.pth"]
 
 
-# weights_list = [
-#     "31_ca_flatten_not_fixed_61_epoch_16_loss_0.416_f1_0.356.pth",
-#     "31_ca_flatten_not_fixed_61_epoch_17_loss_0.4003_f1_0.4512.pth",
-#     "31_ca_flatten_not_fixed_61_epoch_19_loss_0.3651_f1_0.5365.pth",
-#     "31_ca_flatten_not_fixed_61_epoch_21_loss_0.3574_f1_0.5606.pth",
-#     "31_ca_flatten_not_fixed_61_epoch_23_loss_0.3358_f1_0.5875.pth",
-#     "31_ca_flatten_not_fixed_61_epoch_25_loss_0.3432_f1_0.6006.pth",
-#     "31_ca_flatten_not_fixed_61_epoch_27_loss_0.3308_f1_0.6133.pth"
 
-# ]
 
 hyperparams = {
                'num_epochs':num_epochs,
@@ -356,11 +345,7 @@ def engine(w,hyperparams,model,testloader,fixed_label_embedding,fixed_task_embed
 
 
 def collate_fn(data):
-    """
-    定义 dataloader 的返回值
-    :param data: 第0维：data，第1维：label
-    :return: 序列化的data、记录实际长度的序列、以及label列表
-    """
+
     data.sort(key=lambda x: len(x[0]), reverse=True)
  
     data_length = [sq[0].shape[0] for sq in data]
@@ -382,7 +367,7 @@ if __name__ == "__main__":
     fixed_task_embedding = torch.stack(task_embedding)
 
 
-    test_data = TEXTDataset('/home/comp/cssniu/RAIM/benchmark_data/all/data/test/',flag="test",all_feature=True)
+    test_data = TEXTDataset('',flag="test",all_feature=True)
 
     print('len of test data:', len(test_data)) 
     testloader = torch.utils.data.DataLoader(test_data,drop_last=True, batch_size=BATCH_SIZE, shuffle =True,collate_fn=collate_fn, num_workers=12)
