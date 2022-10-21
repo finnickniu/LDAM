@@ -112,41 +112,6 @@ class LEAM(nn.Module):
         # z = self.sigmoid(z)
         return z,weight,c,t,u,weighted_embed
 
-def collate_fn(data):
-    """
-    定义 dataloader 的返回值
-    :param data: 第0维：data，第1维：label
-    :return: 序列化的data、记录实际长度的序列、以及label列表
-    """
-    data.sort(key=lambda x: len(x[0]), reverse=True)
- 
-    data_length = [sq[0].shape[0] for sq in data]
-
-    input_x = [i[0].tolist() for i in data]
-    y = [i[1] for i in data]
-    text = [i[2] for i in data]
-    task_token =  [i[3] for i in data]
-    label_token =  [i[4] for i in data]
-    data = rnn_utils.pad_sequence([torch.from_numpy(np.array(x)) for x in input_x],batch_first = True, padding_value=0)
-    return data.unsqueeze(-1), data_length, torch.tensor(y, dtype=torch.float32),text,task_token,label_token
-if __name__ == "__main__":
-    device = torch.device("cuda:3")
-    dataset = TEXTDataset('/home/comp/cssniu/RAIM/benchmark_data/all/data/train/',flag="train",all_feature=True)
-    batch_size = 10
-    embedding_dim = 768 
-    output_dim = 25
-    dropout = 0.5
-    ngram = 3
-    model = LEAM(embedding_dim, output_dim, dropout, ngram, batch_size).to(device)
-    trainloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn)
-    for (data,length,label,text,task_token,label_token) in tqdm(trainloader):
-        text = [t.to(device) for t in text]
-        label_token = [l.to(device) for l in label_token]
-        z,weight,c,t = model(text,label_token)
-        # print(pred)
-        # print(pred)
-    # print(output[0].shape)
-
 
 
 
