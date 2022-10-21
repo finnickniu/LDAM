@@ -1,6 +1,5 @@
 import os
 from numpy.core.fromnumeric import shape
-# os.chdir("/home/comp/cssniu/RAIM/models/")
 from tqdm import tqdm
 import torch
 import torch.optim as optim
@@ -29,7 +28,6 @@ import heapq
 warnings.filterwarnings('ignore')
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
-### GPU 23 avg pooling not fixed; GPU 22 avg pooling fixed, GPU 22 flatten fixed, GPU24 flatten not fixed
 num_epochs = 1
 BATCH_SIZE = 30
 device = "cuda:1" if torch.cuda.is_available() else "cpu"
@@ -124,8 +122,7 @@ def calc_loss_c(c,criterion,model, y, device):
     """
     torch.tensor([0,1,2]) is decoded identity label vector
     """
-    ## 每个class 内部自己做cross entropy， 相当于做了25次， 也就是25个batch，python cross entropy 自带softmax,也不用做onehot
-    # print(c.shape)
+
     f2_c = model.text_fc(c)
     # f2_c = model.fc(c)
     y_c =  torch.stack([torch.range(0, y.shape[1] - 1, dtype=torch.long)]*c.shape[0]).to(device)
@@ -362,7 +359,7 @@ def collate_fn(data):
 
 if __name__ == "__main__":
 
-    task_embedding,label_embedding= knowledge_dataloader.load_embeddings("/home/comp/cssniu/RAIM/embedding.pth")
+    task_embedding,label_embedding= knowledge_dataloader.load_embeddings("")
     fixed_label_embedding = torch.stack(label_embedding)
     fixed_task_embedding = torch.stack(task_embedding)
 
