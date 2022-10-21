@@ -60,8 +60,8 @@ label_list = ["Acute and unspecified renal failure",
         "Diabetes mellitus with complications",
         "Other liver diseases",
         ]
-data_dir = os.path.join("/home/comp/cssniu/RAIM/benchmark_data/all/data/test")
-text_dir = os.path.join("/home/comp/cssniu/RAIM/benchmark_data/all/text/test")
+data_dir = os.path.join("")
+text_dir = os.path.join("")
 data_list = os.listdir(data_dir)
 text_list = os.listdir(text_dir)
 reulst = []
